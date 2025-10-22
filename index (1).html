@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%;overflow:hidden;font-family:'Segoe UI',sans-serif;color:#fff;text-align:center}
+
+    /* Background gerak + salju */
+    #bgAnim{position:fixed;inset:0;z-index:-3;background:linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#000);background-size:400% 400%;animation:gradMove 15s ease infinite}
+    @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    #snow{position:fixed;inset:0;z-index:-1;pointer-events:none}
+    .flake{position:absolute;top:-20px;user-select:none;animation:fall linear infinite;color:#fff;font-size:1rem}
+    @keyframes fall{to{transform:translateY(100vh) rotate(360deg)}}
+
+    /* Partikel kilat */
+    #particles{position:fixed;inset:0;z-index:-2}
+    .dot{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;box-shadow:0 0 8px #fff;animation:twinkle 3s infinite}
+    @keyframes twinkle{0%,100%{opacity:0}50%{opacity:1}}
+
+    /* Konten */
+    #Content{opacity:0;margin-top:10vh;transition:opacity 1.5s ease}
+    .muncul{opacity:1!important}
+    .sembunyi{display:none}
+    #kadoIn{font-size:100px;cursor:pointer;animation:pulse 1.3s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+    #ket{margin-top:10px;font-size:1.1rem;letter-spacing:1px}
+
+    /* Pesan */
+    #kalimat,#pesan4{font-size:1.7rem;margin:20px 0}
+    #pesan4{font-size:2.5rem;font-weight:bold;text-shadow:0 0 10px #ff4d84}
+    .pesanAnim{opacity:0;transform:translateY(30px);animation:fadeIn .8s forwards}
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+
+    /* Love */
+    #kolombaru{display:flex;justify-content:center;gap:18px;margin-top:15px;font-size:2.3rem}
+    #kolombaru li{list-style:none;cursor:pointer;transition:transform .3s}
+    #kolombaru li:hover{transform:scale(1.4)}
+    .loveHit{animation:lovePop .4s ease}
+    @keyframes lovePop{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+
+    /* Kue - tetap di layar */
+    #kueBesar{font-size:120px;margin:20px auto;animation:kueNaik 1s ease-out, pulse 2s infinite 1s;position:relative;z-index:10}
+    @keyframes kueNaik{from{transform:translateY(100px) scale(.5);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+
+    /* Tombol */
+    #Tombol{margin-top:30px}
+    #By{background:linear-gradient(45deg,#ff4d84,#ff8a00);color:#fff;padding:14px 30px;border-radius:30px;cursor:pointer;font-weight:bold;font-size:1.1rem;animation:pulse 2s infinite}
+  </style>
+</head>
+<body>
+
+<div id="bgAnim"></div>
+<div id="particles"></div>
+<div id="snow"></div>
+
+<audio id="linkmp3" class="sembunyi" loop>
+  <source src="https://feeldreams.github.io/djikhlas.mp3"/>
+</audio>
+
+<div id="Content">
+  <div id="kadoIn">🎁</div>
+  <p id="ket">Klik Kadonya!</p>
+
+  <p id="kalimat" class="sembunyi"></p>
+  <p id="pesan1" class="sembunyi">Klik 4 ❤️ di bawah!</p>
+  <ul id="kolombaru" class="sembunyi">
+    <li id="lv1">❤️</li><li id="lv2">❤️</li><li id="lv3">❤️</li><li id="lv4">❤️</li>
+  </ul>
+
+  <p id="pesan2" class="sembunyi">Tunggu...</p>
+  <p id="pesan3" class="sembunyi">Cieee... Ada yang Ultah Nih 🥳❤️</p>
+
+  <!-- Kue muncul TERUS -->
+  <div id="kueBesar" class="sembunyi">🎂</div>
+
+  <p id="pesan4" class="sembunyi">Happy Birthday, </p>
+  <p id="pesan5" class="sembunyi">Nambah tua aja ya, hehe</p>
+  <p id="pesan6" class="sembunyi">Moga panjang umur biar tiap tahun bisa traktirin aku wkwk 🥺❤️</p>
+  <p id="pesan7" class="sembunyi">Sehat selalu ya!</p>
+  <p id="pesan8" class="sembunyi">Canda wkwkw :v</p>
+  <p id="pesan9" class="sembunyi">Semoga di hari spesialmu ini kamu dapat menjadi pribadi yang lebih baik yaa. 🥰❤️</p>
+  <p id="pesan10" class="sembunyi">Happy Level Up Day!! 🥳</p>
+
+  <div id="Tombol" class="sembunyi"><span id="By">💌 Lanjut</span></div>
+</div>
+
+<script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+<script>
+  const Content = document.getElementById('Content');
+  const kadoIn = document.getElementById('kadoIn');
+  const audio = document.getElementById('linkmp3');
+  let nama = '';
+  let cntLove = 0;
+
+  window.onload = () => Content.classList.add('muncul');
+
+  kadoIn.onclick = () => {
+    kadoIn.style.display = 'none';
+    document.getElementById('ket').style.display = 'none';
+    audio.play();
+    mintaNama();
+  };
+
+  function mintaNama() {
+    const namaInput = prompt('Masukin Nama Kamu (1-10 karakter):');
+    if (!namaInput || namaInput.length > 10) {
+      alert('Nama tidak valid!');
+      mintaNama();
+      return;
+    }
+    nama = namaInput;
+    document.getElementById('pesan4').innerHTML = 'Happy Birthday, <b>' + nama + '</b>';
+    ketikHalo();
+  }
+
+  function ketikHalo() {
+    new TypeIt("#kalimat", {
+      strings: 'Hai, ' + nama + ' 🥰<br>Aku Ada Sesuatu Nih 🥺❤️',
+      speed: 70,
+      afterComplete: () => tampilLove()
+    }).go();
+  }
+
+  function tampilLove() {
+    const ids = ['pesan1', 'kolombaru'];
+    ids.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        el.classList.remove('sembunyi');
+        el.classList.add('pesanAnim');
+      }, i * 400);
+    });
+  }
+
+  ['lv1', 'lv2', 'lv3', 'lv4'].forEach(id => {
+    document.getElementById(id).onclick = function () {
+      if (this.style.color === 'rgb(233, 30, 99)') return;
+      this.classList.add('loveHit');
+      this.style.color = '#e91e63';
+      cntLove++;
+      if (cntLove === 4) setTimeout(munculKue, 600);
+    };
+  });
+
+  function munculKue() {
+    const kue = document.getElementById('kueBesar');
+    kue.classList.remove('sembunyi');
+    kue.classList.add('pesanAnim');
+    lanjutPesan();
+  }
+
+  function lanjutPesan() {
+    const arr = ['pesan2', 'pesan3', 'pesan4', 'pesan5', 'pesan6', 'pesan7', 'pesan8', 'pesan9', 'pesan10'];
+    let i = 0;
+    const t = setInterval(() => {
+      if (i === arr.length) { clearInterval(t); tampilTombol(); return; }
+      const el = document.getElementById(arr[i]);
+      el.classList.remove('sembunyi');
+      el.classList.add('pesanAnim');
+      i++;
+    }, 1200);
+  }
+
+  function tampilTombol() {
+    const T = document.getElementById('Tombol');
+    T.classList.remove('sembunyi');
+    T.classList.add('pesanAnim');
+    document.getElementById('By').onclick = () => {
+      const mau = confirm('Mau Kado Gak Nih? 🥺❤️\nOK = Mau\nCancel = Engga');
+      if (mau) {
+        const pesan = 'Makasii udah ngucapin ' + nama + ' ultah ><';
+        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(pesan));
+      } else {
+        alert('Yaudah kalo gamau mh 😜');
+      }
+    };
+  }
+
+  /* Salju */
+  const snowContainer = document.getElementById('snow');
+  const flakeCount = 70;
+  for (let i = 0; i < flakeCount; i++) {
+    const flake = document.createElement('div');
+    flake.className = 'flake';
+    flake.innerHTML = '❄';
+    flake.style.left = Math.random() * 100 + '%';
+    flake.style.animationDuration = (Math.random() * 4 + 3) + 's';
+    flake.style.opacity = Math.random();
+    flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+    snowContainer.appendChild(flake);
+  }
+
+  /* Partikel kilat */
+  const pContainer = document.getElementById('particles');
+  for (let i = 0; i < 50; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.style.top = Math.random() * 100 + '%';
+    dot.style.left = Math.random() * 100 + '%';
+    dot.style.animationDelay = Math.random() * 3 + 's';
+    pContainer.appendChild(dot);
+  }
+</script>
+</body>
+</html>
